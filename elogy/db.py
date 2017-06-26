@@ -301,6 +301,11 @@ def convert_attributes(logbook, attributes):
     return converted
 
 
+def escape_string(s):
+    "Encode single quotes (for SQlite)"
+    return s.replace("'", "''")
+
+
 class Entry(Model):
 
     class Meta:
@@ -456,7 +461,6 @@ class Entry(Model):
         # the query as a raw string is that peewee does not (currently)
         # support recursive queries, which we need in order to search
         # through nested logbooks. Cleanup needed!
-        # TODO: sanitize the SQL queries to prevent bad injections
 
         if attribute_filter:
             # need to extract the attribute values from JSON here, so that
@@ -464,7 +468,8 @@ class Entry(Model):
             attributes = ", {}".format(
                 ", ".join(
                     "json_extract(entry.attributes, '$.{attr}') AS {attr_id}"
-                    .format(attr=attr, attr_id="attr{}".format(i))
+                    .format(attr=escape_string(attr),
+                            attr_id="attr{}".format(i))
                     for i, (attr, _) in enumerate(attribute_filter)))
         else:
             attributes = ""
@@ -480,7 +485,7 @@ class Entry(Model):
         if logbook:
             if child_logbooks:
                 # recursive query to find all entries in the given logbook
-                # or any of its descendants, to arbitrary depth
+                # or any of its descendants, to arbitrary depth.
                 query = """
 WITH recursive logbook1(id,parent_id) AS (
     values('{logbook}', NULL)
@@ -528,13 +533,23 @@ WHERE 1
         #     query += " AND entry.follows_id IS NULL"
 
         # further filters on the results, depending on search criteria
+
+        # Building a list of variable arguments ('?'s in the query)
+        # It's safer to create the query this way as we don't have to
+        # worry about injections.
+        variables = []
+
         if content_filter:
-            # need to filter out null or REGEX will explode on them
-            query += " AND entry.content IS NOT NULL AND entry.content REGEXP '{}'".format(content_filter)
+            # Note: need to filter out null or REGEX will explode on them
+            query += " AND entry.content IS NOT NULL AND entry.content REGEXP ?"
+            variables.append(content_filter)
         if title_filter:
-            query += " AND entry.title IS NOT NULL AND entry.title REGEXP '{}'".format(title_filter)
+            query += " AND entry.title IS NOT NULL AND entry.title REGEXP ?"
+            variables.append(title_filter)
         if author_filter:
-            query += " AND json_extract(authors2.value, '$.name') REGEXP '{}'".format(author_filter)
+            # here we make use of the extracted table
+            query += " AND json_extract(authors2.value, '$.name') REGEXP ?"
+            variables.append(author_filter)
 
         # if attachment_filter:
         #     entries = (
@@ -548,16 +563,17 @@ WHERE 1
         #         .group_by(Entry.id))
 
         if attribute_filter:
+            # here we make use of the extracted table
             for i, (attr, value) in enumerate(attribute_filter):
-                # attr_value = fn.json_extract(Entry.attributes, "$." + attr)
-                query += " AND {} = '{}'".format("attr{}".format(i), value)
+                query += " AND ? = ?"
+                variables.extend(["attr{}".format(i), value])
 
         # Here we're getting into deep water...
         # If we just want the total count of results, we can't group
         # because then the count would be per group. So that makes sense.
         # However, when we're searching, we also don't want the grouping
-        # because it means we
-        if not count:  #,
+        # because it means we won't find individual followups.
+        if not count:
             query += " GROUP BY entry.id"
             if not any([title_filter, content_filter, author_filter]):
                 query += " HAVING entry.follows_id IS NULL"
@@ -568,8 +584,8 @@ WHERE 1
             query += " LIMIT {}".format(n)
             if offset:
                 query += " OFFSET {}".format(offset)
-        print(query)
-        return Entry.raw(query)
+
+        return Entry.raw(query, *variables)
 
 
 DeferredEntry.set_model(Entry)
