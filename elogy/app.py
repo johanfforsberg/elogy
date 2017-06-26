@@ -54,33 +54,33 @@ api = Api(app, prefix="/api", errors=api_errors)
 
 api.add_resource(LogbooksResource,
                  "/logbooks/",
-                 "/logbooks/<int:logbook_id>/",
-                 "/logbooks/<int:logbook_id>/revisions/<int:revision_n>/")
+                 "/logbooks/<uuid:logbook_id>/",
+                 "/logbooks/<uuid:logbook_id>/revisions/<int:revision_n>/")
 
 api.add_resource(LogbookChangesResource,
-                 "/logbooks/<int:logbook_id>/revisions/")
+                 "/logbooks/<uuid:logbook_id>/revisions/")
 
 api.add_resource(EntriesResource,
-                 "/logbooks/<int:logbook_id>/entries/")  # GET
+                 "/logbooks/<uuid:logbook_id>/entries/")  # GET
 
 api.add_resource(EntryResource,
-                 "/entries/<int:entry_id>/",
-                 "/logbooks/<int:logbook_id>/entries/",   # POST, PUT
-                 "/logbooks/<int:logbook_id>/entries/<int:entry_id>/",
-                 "/logbooks/<int:logbook_id>/entries/<int:entry_id>/revisions/<int:revision_n>")
+                 "/entries/<uuid:entry_id>/",
+                 "/logbooks/<uuid:logbook_id>/entries/",   # POST, PUT
+                 "/logbooks/<uuid:logbook_id>/entries/<uuid:entry_id>/",
+                 "/logbooks/<uuid:logbook_id>/entries/<uuid:entry_id>/revisions/<int:revision_n>")
 
 api.add_resource(EntryChangesResource,
-                 "/logbooks/<int:logbook_id>/entries/<int:entry_id>/revisions/")
+                 "/logbooks/<uuid:logbook_id>/entries/<uuid:entry_id>/revisions/")
 
 api.add_resource(EntryLockResource,
-                 "/logbooks/<int:logbook_id>/entries/<int:entry_id>/lock",
-                 "/entries/<int:entry_id>/lock")
+                 "/logbooks/<uuid:logbook_id>/entries/<uuid:entry_id>/lock",
+                 "/entries/<uuid:entry_id>/lock")
 
 api.add_resource(UsersResource,
                  "/users/")
 
 api.add_resource(AttachmentsResource,
-                 "/logbooks/<int:logbook_id>/entries/<int:entry_id>/attachments/",
+                 "/logbooks/<uuid:logbook_id>/entries/<uuid:entry_id>/attachments/",
                  "/attachments/")
 
 

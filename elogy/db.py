@@ -2,16 +2,39 @@ from datetime import datetime, timedelta
 from html.parser import HTMLParser
 import logging
 import re
+from uuid import uuid4, UUID
 
 from flask import url_for
 from playhouse.sqlite_ext import SqliteExtDatabase, JSONField
-from peewee import (CharField, TextField, BooleanField,
+from peewee import (Field, CharField, TextField, BooleanField,
                     DateTimeField, ForeignKeyField)
 from peewee import Model, DoesNotExist, DeferredRelation, fn
 
 
 # defer the actual db setup to later, when we have read the config
 db = SqliteExtDatabase(None)
+
+
+class UUID4Field(Field):
+
+    db_field = "char"
+
+    def __init__(self, *args, **kwargs):
+        # kwargs["max_length"] = 36
+        super().__init__(*args, **kwargs)
+        self.default = lambda: str(uuid4())
+
+    def db_value(self, value):
+        print("isert", str(value))
+        if value is None:
+            return
+        return str(value)  # convert UUID to str
+
+    def python_value(self, value):
+        print("dsadpsad", self, value)
+        if value is None:
+            return
+        return UUID(value)  # convert str to UUID
 
 
 def setup_database(db_name, close=True):
@@ -37,6 +60,7 @@ class Logbook(Model):
     class Meta:
         database = db
 
+    id = UUID4Field(primary_key=True, null=False)
     created_at = DateTimeField(default=datetime.utcnow)
     last_changed_at = DateTimeField(null=True)
     name = CharField()
@@ -161,6 +185,7 @@ class LogbookChange(Model):
     class Meta:
         database = db
 
+    id = UUID4Field(primary_key=True)
     logbook = ForeignKeyField(Logbook, related_name="changes")
 
     changed = JSONField()
@@ -282,6 +307,7 @@ class Entry(Model):
         database = db
         order_by = ("created_at",)
 
+    id = UUID4Field(primary_key=True)
     logbook = ForeignKeyField(Logbook, related_name="entries")
     title = CharField(null=True)
     authors = JSONField(default=[])
@@ -457,7 +483,7 @@ class Entry(Model):
                 # or any of its descendants, to arbitrary depth
                 query = """
 WITH recursive logbook1(id,parent_id) AS (
-    values({logbook}, NULL)
+    values('{logbook}', NULL)
     UNION ALL
     SELECT logbook.id, logbook.parent_id FROM logbook,logbook1
     WHERE logbook.parent_id=logbook1.id
@@ -477,7 +503,7 @@ WHERE entry.logbook_id=logbook1.id
             else:
                 # In this case we're not searching recursively
                 query = (
-                    "SELECT {what}{attributes},coalesce(entry.last_changed_at, entry.created_at) AS timestamp FROM entry{authors} WHERE entry.logbook_id = {logbook}"
+                    "SELECT {what}{attributes},coalesce(entry.last_changed_at, entry.created_at) AS timestamp FROM entry{authors} WHERE entry.logbook_id = '{logbook}'"
                     .format(what="count()" if count else "entry.*",
                             logbook=logbook,
                             attributes=attributes,
@@ -542,6 +568,7 @@ WHERE 1
             query += " LIMIT {}".format(n)
             if offset:
                 query += " OFFSET {}".format(offset)
+        print(query)
         return Entry.raw(query)
 
 
@@ -566,6 +593,7 @@ class EntryChange(Model):
     class Meta:
         database = db
 
+    id = UUID4Field(primary_key=True)
     entry = ForeignKeyField(Entry, related_name="changes")
 
     changed = JSONField()
@@ -711,6 +739,7 @@ class Attachment(Model):
         database = db
         order_by = ("id",)
 
+    id = UUID4Field(primary_key=True)
     entry = ForeignKeyField(Entry, null=True, related_name="attachments")
     filename = CharField(null=True)
     timestamp = DateTimeField(default=datetime.utcnow)

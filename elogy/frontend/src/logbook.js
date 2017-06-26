@@ -135,9 +135,7 @@ class Logbook extends React.Component {
     render() {
 
         const logbook = this.state.logbook,
-              entryId = this.props.match.params.entryId?
-                        parseInt(this.props.match.params.entryId, 10)
-                      : null,
+              entryId = this.props.match.params.entryId,
               query = parseQuery(this.props.location.search),
               filter = ["title", "content", "authors"]
                   .filter(key => query[key])

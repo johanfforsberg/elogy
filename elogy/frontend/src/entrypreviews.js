@@ -49,7 +49,7 @@ const EntryPreview = ({logbook, entry, selected, search=""}) => {
     const authors = entry.authors
                          .slice(0, 2)
                          .map((author, i) => <span key={i} className="author">{author}</span>);
-    const allAuthors = entry.authors.join(",&nbsp;");
+    const allAuthors = entry.authors.join(", ");
     // for space reasons, we only show up to the two frst authors
     // and then add a summary of the rest, e.g. "(+3)".
     const authorsEllipsis = entry.authors.length > 2?

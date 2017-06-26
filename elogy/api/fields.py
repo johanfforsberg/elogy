@@ -8,8 +8,13 @@ class NumberOf(fields.Raw):
         return len(value)
 
 
+class UUIDField(fields.Raw):
+    def format(self, value):
+        return str(value)
+
+
 logbook_child = {
-    "id": fields.Integer,
+    "id": UUIDField,
     "name": fields.String,
     "description": fields.String,
     "n_children": NumberOf(attribute="children")
@@ -31,8 +36,8 @@ class LogbookField(fields.Raw):
 
 
 logbook_short = {
-    "id": fields.Integer,
-    "parent_id": fields.Integer(attribute="parent.id"),
+    "id": UUIDField,
+    "parent_id": UUIDField(attribute="parent.id"),
     "name": fields.String,
     "description": fields.String,
     "children": fields.List(LogbookField),
@@ -40,12 +45,12 @@ logbook_short = {
 
 
 logbook = {
-    "id": fields.Integer,
+    "id": UUIDField,
     "name": fields.String,
     "description": fields.String,
     "template": fields.String,
     "parent": fields.Nested({
-        "id": fields.Integer(default=None),
+        "id": UUIDField,
         "name": fields.String
     }, allow_null=True),
     "created_at": fields.String,
@@ -62,7 +67,7 @@ authors = {
 
 
 logbookchange_metadata = {
-    "id": fields.Integer,
+    "id": UUIDField,
     "timestamp": fields.DateTime,
     "change_authors": fields.List(fields.Nested(authors)),
     "change_comment": fields.String,
@@ -110,7 +115,7 @@ class Followup(fields.Raw):
 # followups don't need to contain e.g. logbook information since we
 # can assume that they belong to the same logbook as their parent
 followup = {
-    "id": fields.Integer,
+    "id": UUIDField,
     "title": fields.String,
     "created_at": fields.DateTime,
     "authors": fields.List(fields.Nested(authors)),
@@ -124,11 +129,11 @@ followup = {
 
 class EntryId(fields.Raw):
     def format(self, value):
-        return value.id if value else None
+        return str(value.id) if value else None
 
 
 entry_lock = {
-    "id": fields.Integer,
+    "id": UUIDField,
     "created_at": fields.DateTime,
     "expires_at": fields.DateTime,
     "owned_by_ip": fields.String,
@@ -137,7 +142,7 @@ entry_lock = {
 }
 
 entry_full = {
-    "id": fields.Integer,
+    "id": UUIDField,
     "logbook": fields.Nested(logbook),
     "title": fields.String,
     "created_at": fields.DateTime,
@@ -163,7 +168,7 @@ entry = {
 
 
 entrychange_metadata = {
-    "id": fields.Integer,
+    "id": UUIDField,
     "timestamp": fields.DateTime,
     "change_authors": fields.List(fields.Nested(authors)),
     "change_comment": fields.String,
@@ -212,13 +217,13 @@ class DateTimeFromStringField(fields.DateTime):
 
 
 logbook_very_short = {
-    "id": fields.Integer,
+    "id": UUIDField,
     "name": fields.String,
 }
 
 
 short_entry = {
-    "id": fields.Integer,
+    "id": UUIDField,
     "logbook": fields.Nested(logbook_very_short),
     "title": fields.String,
     "content": ContentPreview,

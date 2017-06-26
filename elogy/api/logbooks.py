@@ -6,7 +6,7 @@ from . import fields, send_signal
 
 
 logbooks_parser = reqparse.RequestParser()
-logbooks_parser.add_argument("parent_id", type=int)
+logbooks_parser.add_argument("parent_id", type=str)
 logbooks_parser.add_argument("name", type=str, required=True)
 logbooks_parser.add_argument("description", type=str)
 logbooks_parser.add_argument("template", type=str)
@@ -40,12 +40,14 @@ class LogbooksResource(Resource):
             return Logbook.get(Logbook.id == parent_id)
         children = (Logbook.select()
                     .where(Logbook.parent == None))
+        print(children)
         return dict(children=children)
 
     @send_signal(new_logbook)
     @marshal_with(fields.logbook, envelope="logbook")
     def post(self, logbook_id=None):
         "Create a new logbook"
+        print("logbook_id", logbook_id)
         args = logbooks_parser.parse_args()
         print(args, logbook_id)
         logbook = Logbook(name=args["name"], parent=args["parent_id"],
@@ -57,7 +59,8 @@ class LogbooksResource(Resource):
         if logbook_id is not None:
             parent = Logbook.get(Logbook.id == logbook_id)
             logbook.parent = parent
-        logbook.save()
+        logbook.save(force_insert=True)
+        print(logbook.id)
         return logbook
 
     @send_signal(edit_logbook)
@@ -66,7 +69,8 @@ class LogbooksResource(Resource):
         "Update an existing logbook"
         logbook = Logbook.get(Logbook.id == logbook_id)
         args = logbooks_parser.parse_args()
-        logbook.make_change(**args).save()
+        change = logbook.make_change(**args).save()
+        change.save(force_insert=True)
         logbook.save()
         return logbook
 

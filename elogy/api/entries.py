@@ -86,7 +86,7 @@ class EntryResource(Resource):
         entry = Entry.create(**data)
         for attachment in inline_attachments:
             attachment.entry = entry
-            attachment.save()
+            attachment.save(force_insert=True)  # b/c non-autoincrementing key
         return entry
 
     @send_signal(edit_entry)
@@ -128,7 +128,7 @@ class EntryResource(Resource):
         entry = Entry.get(Entry.id == entry_id)
         change = entry.make_change(**args)
         entry.save()
-        change.save()
+        change.save(force_insert=True)
         for attachment in inline_attachments:
             attachment.entry = entry
             attachment.save()
