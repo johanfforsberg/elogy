@@ -227,20 +227,28 @@ class Logbook extends React.Component {
                                 <div className="entry">
                                     <Link
                                         to={{
-                                            pathname: `/logbooks/${logbook.id}/entries/new`,
+                                            pathname: `/logbooks/${
+                                                logbook.id
+                                            }/entries/new`,
                                             search: window.location.search
                                         }}
-                                        title={`Create a new entry in the logbook '${logbook.name}'`}
+                                        title={`Create a new entry in the logbook '${
+                                            logbook.name
+                                        }'`}
                                     >
                                         New entry
                                     </Link>
                                 </div>
                                 <Link
                                     to={{
-                                        pathname: `/logbooks/${logbook.id}/edit`,
+                                        pathname: `/logbooks/${
+                                            logbook.id
+                                        }/edit`,
                                         search: window.location.search
                                     }}
-                                    title={`Edit the settings of the logbook '${logbook.name}'`}
+                                    title={`Edit the settings of the logbook '${
+                                        logbook.name
+                                    }'`}
                                 >
                                     Configure
                                 </Link>{" "}
@@ -255,7 +263,9 @@ class Logbook extends React.Component {
                             title={
                                 logbook.id === 0
                                     ? "Create a new top level logbook"
-                                    : `Create a new logbook as a child of '${logbook.name}'`
+                                    : `Create a new logbook as a child of '${
+                                          logbook.name
+                                      }'`
                             }
                         >
                             New logbook
