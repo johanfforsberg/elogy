@@ -1,11 +1,11 @@
 flask
 flask-restful
-peewee
+peewee<3.0
 blinker
 pillow
 dateutils
 lxml
 pyldap
 flask-admin
-wtf-peewee
+wtf-peewee<3.0
 webargs
