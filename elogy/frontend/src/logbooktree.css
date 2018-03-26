@@ -1,11 +1,12 @@
 #logbooktree {
     flex: 1;
     overflow: auto;
+    font-size: 110%;
 }
 
 #logbooktree header {
     border-bottom: 1px solid #bbb;
-    padding: 5px;    
+    padding: 5px;  
 }
 
 #logbooktree header .commands {
@@ -13,42 +14,48 @@
 }
 
 #logbooktree .tree {
-    padding: 5px;
+    padding: 0.5em 0.5em 0.5em 1em;  
 }
 
 #logbooktree ul {
     margin: 0px;
+    padding-left: 2em;
+}
+
+#logbooktree li {
     list-style: none;
-    padding-left: 20px;
+    text-indent: -1em;
 }
 
 #logbooktree li a {
-    text-decoration: none;    
+    text-decoration: none;
 }
 
 #logbooktree .selected {
-    background: white;
+    font-weight: bold;
 }
 
-#logbooktree li.has-children {
-    /* padding-left: 5px; */
-    position: relative;
+#logbooktree li:not(.has-children) {
+    padding-left: 0;
 }
+
+/* #logbooktree li.has-children { */
+/*     /\* padding-left: 5px; *\/ */
+/*     position: relative; */
+/* } */
 
 #logbooktree li input {
     position: absolute;
     left: 0;
 }
 
-
 #logbooktree input[type='checkbox'] {
     display: none;
     /* width: 0; */
 }
 
-
 #logbooktree input[type='checkbox'] + label:before {
-    content: "▶";
+    content: "►";
 }
 
 #logbooktree input[type='checkbox']:checked + label:before {

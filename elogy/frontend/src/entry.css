@@ -96,14 +96,14 @@
 #entry .info .attributes .attribute .name {
     background: #ccc;
     color: black;
-    padding: 1px 4px;
+    padding: 0.3em 0.5em;
     border-radius: 5px 0 0 5px;
 }
 
 #entry .info .attributes .attribute .value {
     background: #666;
     color: white;
-    padding: 1px 4px;
+    padding: 0.3em 0.5em;
     border-radius: 0 5px 5px 0;
 }
 

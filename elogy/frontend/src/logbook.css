@@ -15,7 +15,7 @@
 }
 
 #logbook header {
-    padding: 5px;
+    padding: 0.5em;
     position: relative;
     background: #ddd;
     border-bottom: 1px solid #aaa;
@@ -70,7 +70,7 @@
 #logbook dd.entry {
     opacity: 0.5;    
     list-style: none;
-    padding: 5px 5px 0 5px;
+    padding: 0.5em 0.5em 0 0.5em;
     height: 5em;
     overflow: hidden;
 }
@@ -78,6 +78,7 @@
 #logbook div.entry {
     position: relative;
     height: 100%;
+    line-height: 1.3em;    
 }
 
 #logbook div.entry .inner {
@@ -137,6 +138,7 @@
 }
 
 #logbook .entry .title > span {
+    font-size: 110%;
     text-decoration: underline;
 }
 
@@ -144,6 +146,7 @@
     font-size: 80%;
     white-space: normal;
     height: 100%;
+    line-height: 1.1em;
 }
 
 #logbook .entry img {
@@ -206,11 +209,13 @@
 
 #logbook dt.group {
     top: 0;
+    padding: 2px;
     position: sticky;    
-    font-size: 80%;
+    font-size: 90%;
     color: black;
     background: #bbb;
     text-align: center;
+    font-weight: bold;
     z-index: 1;
 }
 
@@ -232,7 +237,7 @@
 }
 
 #logbook .attributes select {
-    font-size: 70%;
+    font-size: 90%;
     margin: 1px;
 }
 

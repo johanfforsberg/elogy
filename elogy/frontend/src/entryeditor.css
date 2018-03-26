@@ -55,23 +55,22 @@
     margin-top: 5px;
 }
 
-#entryeditor .attributes span label {
-    display: inline-block;    
+#entryeditor .attributes > span label {
+    /* display: inline-block;     */
     margin: 1px 5px;
-    vertical-align: middle;    
+    vertical-align: middle;
 }
 
-#entryeditor .select-wrapper {
+#entryeditor .select-wrappger {
     /* allow Select component to start small but grow as needed */
     min-width: 150px;
-    display: inline-block;
+    /* display: inline-block; */
     margin: 0 1px;
 }
 
 #entryeditor .attribute-wrapper {
     display: inline-block;
-    margin: 0 1px;
-    
+    margin: 0 1px;    
 }
 
 #entryeditor .attribute-wrapper.option-attribute,
