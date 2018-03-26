@@ -4,6 +4,7 @@ import React from "react";
 import { findDOMNode } from "react-dom";
 import { Link } from "react-router-dom";
 import Mark from "mark.js";
+import "whatwg-fetch";
 
 import "./entry.css";
 import { formatDateTimeString } from "./util.js";

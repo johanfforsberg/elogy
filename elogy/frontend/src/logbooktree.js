@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import "whatwg-fetch";
 
 import "./logbooktree.css";
 import { parseQuery } from "./util.js";
