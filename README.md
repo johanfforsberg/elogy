@@ -1,3 +1,5 @@
+*Important* The development of Elogy has moved to https://github.com/MaxIV-KitsControls/Elogy
+
 Elogy
 =====
 
